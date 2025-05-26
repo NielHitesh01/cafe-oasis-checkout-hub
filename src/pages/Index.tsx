@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { ShoppingCart, Plus, Minus, Coffee, Star, Clock, MapPin, Phone, Mail, CreditCard, Calendar, Lock } from 'lucide-react';
 
@@ -263,6 +262,11 @@ const Index = () => {
     });
   };
 
+  const getItemQuantityInCart = (itemId: number) => {
+    const cartItem = cart.find(item => item.id === itemId);
+    return cartItem ? cartItem.quantity : 0;
+  };
+
   const getTotalPrice = () => {
     return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
@@ -378,40 +382,48 @@ const Index = () => {
           <div className="container mx-auto">
             <h3 className="text-3xl font-bold text-center mb-12 text-amber-900">Our Menu</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {filteredItems.map(item => (
-                <div key={item.id} className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                  <div className="relative">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="absolute top-4 right-4 bg-white bg-opacity-90 px-2 py-1 rounded-full text-sm font-bold text-amber-900">
-                      ₹{item.price}
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h4 className="text-xl font-bold mb-2 text-gray-800">{item.name}</h4>
-                    <p className="text-gray-600 mb-4 text-sm">{item.description}</p>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium">{item.rating}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-gray-500">
-                        <Clock className="w-4 h-4" />
-                        <span className="text-sm">{item.prepTime}</span>
+              {filteredItems.map(item => {
+                const quantityInCart = getItemQuantityInCart(item.id);
+                return (
+                  <div key={item.id} className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div className="relative">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="absolute top-4 right-4 bg-white bg-opacity-90 px-2 py-1 rounded-full text-sm font-bold text-amber-900">
+                        ₹{item.price}
                       </div>
                     </div>
-                    <button
-                      onClick={() => addToCart(item)}
-                      className="w-full bg-gradient-to-r from-amber-700 to-orange-700 text-white py-3 rounded-full font-bold hover:from-amber-800 hover:to-orange-800 transition-all duration-300 transform hover:scale-105 active:scale-95"
-                    >
-                      Add to Cart
-                    </button>
+                    <div className="p-6">
+                      <h4 className="text-xl font-bold mb-2 text-gray-800">{item.name}</h4>
+                      <p className="text-gray-600 mb-4 text-sm">{item.description}</p>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-1">
+                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                          <span className="text-sm font-medium">{item.rating}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-gray-500">
+                          <Clock className="w-4 h-4" />
+                          <span className="text-sm">{item.prepTime}</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => addToCart(item)}
+                        className="w-full bg-gradient-to-r from-amber-700 to-orange-700 text-white py-3 rounded-full font-bold hover:from-amber-800 hover:to-orange-800 transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                      >
+                        <span>Add to Cart</span>
+                        {quantityInCart > 0 && (
+                          <span className="bg-white bg-opacity-20 px-2 py-1 rounded-full text-xs">
+                            {quantityInCart}
+                          </span>
+                        )}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
